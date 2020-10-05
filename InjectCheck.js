@@ -1,8 +1,8 @@
 function InjectCheck(Arg1) {
 
-//Usage:
-//InjectCheck("All") --for all apps in '/Applications'
-//InjectCheck("/Applications/Firefox.app")  --for a specific Application Bundle
+    //Usage:
+    //InjectCheck(All) --for all /Applications  
+    //InjectCheck("/Applications/Firefox.app")  --for specific Application
 
     var output = "";
 
@@ -26,14 +26,14 @@ function InjectCheck(Arg1) {
 
         //Get Hardened Runtime
         let applicationName = signingInformation["info-plist"].CFBundleExecutable
-         output += "************************************** " + applicationName + " ************************************** " + '\n'
+        output += "************************************** " + applicationName + " ************************************** " + '\n'
 
 
         let hardenedRuntimeFlag = 10000
         let signingFlags = signingInformation.flags.toString(16)
 
         output += "The " + applicationName + " application has a Hardened Runtime Value of " + signingFlags + '\n'
-        	if (signingFlags < hardenedRuntimeFlag) {
+        if (signingFlags < hardenedRuntimeFlag) {
             output += "Hardened Runtime is not set for the " + applicationName + " application. Nice and easy injection option: use 'DYLD_INSERT_LIBRARIES'. (e.g.: DYLD_INSERT_LIBRARIES=/PATH_TO/evil.dylib /Applications/Calculator.app/Contents/MacOS/Calculator &) or Attempt injection with listtasks/libinject in Mythic Agent poseidon" + '\n'
         } else {
             output += "Hardened Runtime is set" + '\n'
@@ -85,31 +85,31 @@ function InjectCheck(Arg1) {
             .map(ObjC.unwrap);
     }
 
-if (Arg1 == "All") {
+    if (Arg1 == "All") {
 
-let enumerateFolderContents = listDirectory('/Applications')
+        let enumerateFolderContents = listDirectory('/Applications')
 
-function stoperror() {
-    return true;
-}
-var installedApps = []
-		for (var key in enumerateFolderContents) {
-		    try {
+        function stoperror() {
+            return true;
+        }
+        var installedApps = []
+        for (var key in enumerateFolderContents) {
+            try {
 
-		        codeSign("/Applications/" + enumerateFolderContents[key])
-		    } catch (e) {
-		        stoperror(e)
-		    }
+                codeSign("/Applications/" + enumerateFolderContents[key])
+            } catch (e) {
+                stoperror(e)
+            }
 
-		}
-} else {
-	try {
+        }
+    } else {
+        try {
 
-		 codeSign(Arg1)
-		    } catch (e) {
-		        stoperror(e)
-		    }
+            codeSign(Arg1)
+        } catch (e) {
+            stoperror(e)
+        }
 
-}
-return output
+    }
+    return output
 }
